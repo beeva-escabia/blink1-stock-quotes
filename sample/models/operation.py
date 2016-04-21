@@ -19,7 +19,9 @@ class Operation:
 
     def isdataavailable(self):
         name = urllib2.urlopen(str(self.yahoo.urldata) + str(self.quote) + str(self.yahoo.unionbunchtags) + str(self.yahoo.tagname)).read()
+        print name
         if name == "N/A\n":
+            subprocess.call([self.blink.commandexec, self.blink.commandcolorwhite])
             return False
         else:
             return True
@@ -30,6 +32,7 @@ class Operation:
                     str(self.quote.symbol) +
                     str(self.yahoo.unionbunchtags) +
                     str(self.yahoo.tagopenprice)).read()
+        newprice = -1
         while 1:
             data = urllib2.urlopen(
                                       str(self.yahoo.urldata)
@@ -50,22 +53,23 @@ class Operation:
                                         + str(self.quote.symbol)
                                         + str(self.yahoo.unionbunchtags)
                                         + str(self.yahoo.taglasttrade)).read()
-                if price > openprice:
-                    subprocess.call([self.blink.commandexec, self.blink.commandcolorlightgreen])
-
+                if price == newprice:
+                        subprocess.call([self.blink.commandexec, self.blink.commandcolornight])
                 else:
-                    subprocess.call([self.blink.commandexec, self.blink.commandcolorlightred])
+                    if price > openprice:
+                        subprocess.call([self.blink.commandexec, self.blink.commandcolorlightgreen])
 
-                time.sleep(float(self.time))
+                    else:
+                        subprocess.call([self.blink.commandexec, self.blink.commandcolorlightred])
 
-                newprice = urllib2.urlopen(
-                    self.yahoo.urldata + self.quote.symbol + self.yahoo.unionbunchtags + self.yahoo.taglasttrade).read()
+                    time.sleep(float(self.time))
 
-                if newprice > price:
-                    subprocess.call([self.blink.commandexec, self.blink.commandcolorgreen, self.blink.commandoption,
-                                     self.blink.numblinks])
-                elif newprice < price:
-                    subprocess.call([self.blink.commandexec, self.blink.commandcolorred, self.blink.commandoption,
-                                     self.blink.numblinks])
-                else:
-                    print 'Equals'
+                    newprice = urllib2.urlopen(
+                        self.yahoo.urldata + self.quote.symbol + self.yahoo.unionbunchtags + self.yahoo.taglasttrade).read()
+
+                    if newprice > price:
+                        subprocess.call([self.blink.commandexec, self.blink.commandcolorgreen, self.blink.commandoption,
+                                         self.blink.numblinks])
+                    else:
+                        subprocess.call([self.blink.commandexec, self.blink.commandcolorred, self.blink.commandoption,
+                                         self.blink.numblinks])

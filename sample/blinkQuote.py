@@ -2,6 +2,7 @@
 # -*- coding: utf-8 -*-
 import sys
 import getopt
+import subprocess
 from sample.models.notification import Notification
 from sample.models.operation import Operation
 from sample.models.quote import Quote
@@ -16,11 +17,11 @@ def input(argv):
     try:
         opts, args = getopt.getopt(argv, "hs:r:p:", ["isymbol=", "irefresh=", "limitPercent="])
     except getopt.GetoptError:
-        print 'blinkQuote.py -s <symbol> -r <refreshTime> -p <limitPercent>'
+        print 'mainBlinkQuote.py -s <symbol> -r <refreshTime> -p <limitPercent>'
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'blinkQuote.py -s <symbol> -r <refreshTime> -p <limitPercent>'
+            print 'mainBlinkQuote.py -s <symbol> -r <refreshTime> -p <limitPercent>'
             sys.exit()
         elif opt in ("-s", "--isymbol"):
             symbol = arg
@@ -38,11 +39,11 @@ def main(argv):
     """
     operation = input(argv)
 
-    if operation.isdataavailable() == False:
+    if not operation.isdataavailable():
         print 'Quote ' + operation.quote + ' not available'
         sys.exit()
-
-    operation.run()
+    else:
+        operation.run()
 
 if __name__ == "__main__":
     main(sys.argv[1:])
